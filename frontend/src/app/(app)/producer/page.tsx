@@ -9,6 +9,7 @@ import { fmtDate, inr, num, tonnes } from "@/lib/format";
 import { CountUp, ProgressBar, ProgressLegend, SurplusWarning } from "@/components/ProgressBar";
 import { Card, CardHeader, ErrorBox, LinkButton, OrgStatus, PageHeader, Spinner, Stat } from "@/components/ui";
 import { OrdersTable } from "@/components/views";
+import { DemoPath } from "@/components/DemoPath";
 
 export default function ProducerDashboard() {
   const { year } = useAuth();
@@ -22,7 +23,7 @@ export default function ProducerDashboard() {
 
   return (
     <div>
-      <PageHeader eyebrow={`Financial year ${p.financial_year}`} title={data.org.name} actions={<OrgStatus status={data.org.status} />} />
+      <PageHeader howto={[<>Go to <b>Invoices</b> and load the 3 SAMPLE invoices. Confirm them and the bar shows about <b>100 t Remaining</b>.</>, <>Press <b>Close my gap</b> to get a recommended basket, then <b>Order this</b> on one line.</>, <>Use <b>Demo: switch role</b> (top right) to become the recycler, accept and deliver. Switch back and mark it received.</>, <>Watch tonnes move <b>Remaining → Committed → Covered</b> here. Follow the checklist below.</>]} eyebrow={`Financial year ${p.financial_year}`} title={data.org.name} actions={<OrgStatus status={data.org.status} />} />
 
       <Card className="sticky top-[4.25rem] z-10 mb-6 p-5 shadow-lift sm:p-6">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
@@ -39,6 +40,8 @@ export default function ProducerDashboard() {
         <div className="mt-5"><ProgressLegend p={p.overall} /></div>
         <SurplusWarning p={p.overall} />
       </Card>
+
+      <DemoPath invoices={data.invoices} covered={p.overall.covered} />
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="Estimated exposure if unfilled" value={inr(p.exposure.current)} hint={`${tonnes(p.overall.remaining)} × ${inr(p.exposure.tiers[0]?.rate)}/t (placeholder rate, verify)`} icon={<IndianRupee className="size-5" />} tone="red" />

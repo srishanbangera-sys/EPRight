@@ -10,6 +10,7 @@ import {
 import { Logo, Disclaimer } from "./Brand";
 import { useAuth, useToast, homeFor, type Role } from "./Providers";
 import { api } from "@/lib/api";
+import { clearDemo } from "@/lib/demo";
 import { cx, timeAgo } from "@/lib/format";
 import { OrgStatus, Pill } from "./ui";
 
@@ -101,6 +102,7 @@ function RoleSwitcher() {
     setBusy(true);
     try {
       await api("/demo/reset", { method: "POST" });
+      clearDemo();
       const u = await demoLogin(user?.email || "producer@epright.demo").catch(() => demoLogin("producer@epright.demo"));
       bump();
       setOpen(false);

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Loader2, X, ShieldCheck, ShieldAlert, ShieldX, BadgeCheck, CircleAlert, CircleX, Info, CircleCheck, Inbox } from "lucide-react";
+import { Loader2, X, ShieldCheck, ShieldAlert, ShieldX, BadgeCheck, CircleAlert, CircleX, Info, CircleCheck, Inbox, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
 import { cx, fmtDate, human } from "@/lib/format";
 
 // ---------------- Buttons ----------------
@@ -65,15 +65,58 @@ export function CardHeader({ title, subtitle, action, icon }: { title: React.Rea
   );
 }
 
-export function PageHeader({ title, subtitle, actions, eyebrow }: { title: React.ReactNode; subtitle?: React.ReactNode; actions?: React.ReactNode; eyebrow?: string }) {
+export function PageHeader({ title, subtitle, actions, eyebrow, howto }: { title: React.ReactNode; subtitle?: React.ReactNode; actions?: React.ReactNode; eyebrow?: string; howto?: React.ReactNode[] }) {
   return (
-    <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
-      <div className="min-w-0">
-        {eyebrow && <p className="mb-1.5 text-[13px] font-medium text-slate-500">{eyebrow}</p>}
-        <h1 className="text-[26px] font-semibold leading-tight tracking-tight text-slate-900">{title}</h1>
-        {subtitle && <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-slate-500">{subtitle}</p>}
+    <div className="mb-7">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="min-w-0">
+          {eyebrow && <p className="mb-1.5 text-[13px] font-medium text-slate-500">{eyebrow}</p>}
+          <h1 className="text-[26px] font-semibold leading-tight tracking-tight text-slate-900">{title}</h1>
+          {subtitle && <p className="mt-2 max-w-3xl text-[15px] leading-relaxed text-slate-500">{subtitle}</p>}
+        </div>
+        {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
       </div>
-      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+      {howto && howto.length > 0 && <HowTo steps={howto} id={typeof title === "string" ? title : "page"} />}
+    </div>
+  );
+}
+
+/** Short, collapsible "how to use this page" steps for presenters. Remembers collapsed state per page. */
+export function HowTo({ steps, id }: { steps: React.ReactNode[]; id: string }) {
+  const key = `epright_howto_${id}`;
+  const [open, setOpen] = useState(true);
+  useEffect(() => {
+    try {
+      if (localStorage.getItem(key) === "0") setOpen(false);
+    } catch {}
+  }, [key]);
+  const toggle = () => {
+    setOpen((o) => {
+      try { localStorage.setItem(key, o ? "0" : "1"); } catch {}
+      return !o;
+    });
+  };
+  if (!open) {
+    return (
+      <button onClick={toggle} className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 shadow-soft transition hover:border-slate-300 hover:text-slate-900">
+        <Lightbulb className="size-3.5 text-committed" /> How to use this page <ChevronDown className="size-3.5" />
+      </button>
+    );
+  }
+  return (
+    <div className="mt-5 animate-fade-up overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-soft">
+      <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/70 px-4 py-2">
+        <p className="flex items-center gap-1.5 text-xs font-medium text-slate-600"><Lightbulb className="size-3.5 text-committed" /> How to use this page</p>
+        <button onClick={toggle} className="flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">Hide <ChevronUp className="size-3.5" /></button>
+      </div>
+      <ol className={cx("grid divide-slate-100", steps.length >= 4 ? "sm:grid-cols-2 lg:grid-cols-4 lg:divide-x" : steps.length === 3 ? "sm:grid-cols-3 sm:divide-x" : "sm:grid-cols-2 sm:divide-x")}>
+        {steps.map((s, i) => (
+          <li key={i} className="flex gap-3 px-4 py-3">
+            <span className="num mt-px grid size-5 shrink-0 place-items-center rounded-full bg-slate-900 text-[11px] font-medium text-white">{i + 1}</span>
+            <p className="text-[13px] leading-relaxed text-slate-600 [&_b]:font-medium [&_b]:text-slate-900">{s}</p>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }

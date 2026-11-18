@@ -35,7 +35,7 @@ export default function DisputesPage() {
   if (error) return <ErrorBox error={error} onRetry={reload} />;
   return (
     <div>
-      <PageHeader eyebrow="Review" title="Disputes" subtitle="Review the reason and evidence, then refund, release, or ask for more proof. Every decision is logged." />
+      <PageHeader howto={[<>Either party can raise a dispute from an order page.</>, <>Press <b>Decide</b>: refund the producer, release to the recycler, or ask for more proof.</>]} eyebrow="Review" title="Disputes" subtitle="Review the reason and evidence, then refund, release, or ask for more proof. Every decision is logged." />
       <Card>
         {data!.length === 0 ? <Empty title="No disputes" /> : (
           <div className="divide-y divide-slate-100">

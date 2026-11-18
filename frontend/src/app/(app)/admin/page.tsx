@@ -29,7 +29,7 @@ export default function AdminOverview() {
   if (error) return <ErrorBox error={error} onRetry={reload} />;
   return (
     <div>
-      <PageHeader eyebrow="Platform admin" title="Overview" actions={<Button variant="outline" icon={<CalendarClock className="size-4" />} loading={busy} onClick={runJob}>Run document expiry check</Button>} />
+      <PageHeader howto={[<>The tiles link to each queue: <b>documents, flagged items, disputes, escrow</b>.</>, <>Press <b>Run document expiry check</b> to re-check every recycler's document dates now.</>, <>Use <b>Settings & rules</b> to change targets, rates and thresholds.</>]} eyebrow="Platform admin" title="Overview" actions={<Button variant="outline" icon={<CalendarClock className="size-4" />} loading={busy} onClick={runJob}>Run document expiry check</Button>} />
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Link href="/admin/verifications"><Stat label="Documents to review" value={data.pending_docs} icon={<UserCheck className="size-5" />} tone="teal" /></Link>
         <Link href="/admin/flagged"><Stat label="Flagged" value={data.flagged_orders + data.flagged_credits} hint={`${data.flagged_orders} orders · ${data.flagged_credits} external credits`} icon={<Flag className="size-5" />} tone="red" /></Link>

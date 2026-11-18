@@ -18,7 +18,7 @@ export default function RecyclerDashboard() {
 
   return (
     <div>
-      <PageHeader eyebrow="Recycler (PWP)" title={p.name} subtitle={`Registered for categories ${p.categories.join(", ")} · ${p.location || ""}`}
+      <PageHeader howto={[<>New orders appear under <b>Open orders</b>. Open one to accept it.</>, <>After the producer pays, record the <b>delivered credit</b> (certificate ID, tonnes, date).</>, <>Create supply in <b>My listings</b>, limited by your remaining declared capacity.</>]} eyebrow="Recycler (PWP)" title={p.name} subtitle={`Registered for categories ${p.categories.join(", ")} · ${p.location || ""}`}
         actions={<><OrgStatus status={p.status} until={p.docs_valid_until} /><LinkButton href="/recycler/listings" icon={<Package className="size-4" />}>Create listing</LinkButton></>} />
       {p.status !== "VERIFIED" && (
         <Card className="mb-6 border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">

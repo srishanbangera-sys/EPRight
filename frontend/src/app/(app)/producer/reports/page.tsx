@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Download, ShieldCheck, ShieldX } from "lucide-react";
 import { api, download } from "@/lib/api";
+import { markDemo } from "@/lib/demo";
 import { useData } from "@/lib/hooks";
 import { useAuth, useToast } from "@/components/Providers";
 import { fmtDate, inr, tonnes } from "@/lib/format";
@@ -17,6 +18,7 @@ export default function ReportsPage() {
     setBusy(true);
     try {
       await download("/reports/filing", `EPRight-filing-summary-${year}.pdf`, { year });
+      markDemo("report");
     } catch (e: any) {
       toast({ kind: "error", title: "Download failed", body: e.message });
     } finally {
@@ -29,7 +31,7 @@ export default function ReportsPage() {
 
   return (
     <div>
-      <PageHeader eyebrow={`FY ${year}`} title="Filing preparation summary" subtitle="Confirm all figures on the CPCB portal."
+      <PageHeader howto={[<>Check the <b>required, covered and remaining</b> figures for the selected FY.</>, <>Press <b>Download PDF</b> for the filing preparation summary, including audit-chain status.</>, <>Confirm every figure on the official <b>CPCB portal</b> before filing.</>]} eyebrow={`FY ${year}`} title="Filing preparation summary" subtitle="Confirm all figures on the CPCB portal."
         actions={<Button size="lg" icon={<Download className="size-5" />} loading={busy} onClick={pdf}>Download PDF</Button>} />
       <div className="mb-6 grid gap-4 sm:grid-cols-4">
         <Card className="p-5"><p className="text-sm font-bold text-slate-500">Required</p><p className="num text-2xl font-black">{tonnes(p.overall.required)}</p></Card>

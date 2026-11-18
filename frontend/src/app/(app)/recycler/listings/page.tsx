@@ -37,7 +37,7 @@ export default function ListingsPage() {
 
   return (
     <div>
-      <PageHeader eyebrow="Supply" title="My listings" subtitle="Listings need a VERIFIED status with valid documents, a category you are registered for, and tonnes within your remaining declared capacity."
+      <PageHeader howto={[<>Press <b>New listing</b>: category, tonnes, price per tonne, completion date.</>, <>You can only list categories you are <b>registered</b> for, within remaining capacity.</>, <><b>Edit</b> to change price or tonnes, or hide a listing from the marketplace.</>]} eyebrow="Supply" title="My listings" subtitle="Listings need a VERIFIED status with valid documents, a category you are registered for, and tonnes within your remaining declared capacity."
         actions={<Button icon={<Plus className="size-4" />} onClick={openNew}>New listing</Button>} />
       {data?.capacity && <p className="mb-4 text-sm font-semibold text-slate-600">Capacity: {tonnes(data.capacity.left)} left of {tonnes(data.capacity.capacity)}/month ({tonnes(data.capacity.listed)} listed, {tonnes(data.capacity.open)} in open orders)</p>}
       <Card>

@@ -38,7 +38,7 @@ export default function VerificationsPage() {
 
   return (
     <div>
-      <PageHeader eyebrow="Review" title="Verification queue" subtitle="Approve or reject uploaded documents. An organisation is VERIFIED only when all required documents are approved and in date. This is a manual review, not a government lookup." />
+      <PageHeader howto={[<>Sign up a new producer or recycler from the login page. Their documents land here.</>, <>Open the <b>Preview</b> link, then <b>Approve</b> or <b>Reject</b> with a reason.</>, <>Once every required document is approved and in date, the organisation becomes <b>VERIFIED</b>.</>]} eyebrow="Review" title="Verification queue" subtitle="Approve or reject uploaded documents. An organisation is VERIFIED only when all required documents are approved and in date. This is a manual review, not a government lookup." />
       <div className="mb-4"><Tabs value={tab} onChange={setTab} items={[{ value: "pending", label: "Pending review", count: pending.length }, { value: "all", label: "All organisations", count: data!.length }]} /></div>
       {rows.length === 0 && <Card className="p-8 text-center text-slate-500">Nothing waiting for review.</Card>}
       <div className="space-y-4">

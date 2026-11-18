@@ -17,7 +17,7 @@ export default function MarketplacePage() {
 
   return (
     <div>
-      <PageHeader eyebrow="Buy credits" title="Marketplace" subtitle="Every listing is screened by the rule-based Safety Check for your remaining need. It is a screening, not a guarantee."
+      <PageHeader howto={[<><b>What I still need</b> shows only categories you still owe. Untick it to see everything.</>, <>Each card has a <b>Safety Check</b> badge: green safe, amber caution, red blocked.</>, <>Expired recyclers are <b>hidden</b> automatically (see the note at the bottom).</>, <>Open a card to see every reason and place an order, or press <b>Close my gap</b>.</>]} eyebrow="Buy credits" title="Marketplace" subtitle="Every listing is screened by the rule-based Safety Check for your remaining need. It is a screening, not a guarantee."
         actions={<LinkButton href="/producer/basket" variant="accent" icon={<ShoppingBasket className="size-4" />}>Close my gap</LinkButton>} />
 
       {data?.remaining && (

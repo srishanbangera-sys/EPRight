@@ -16,7 +16,7 @@ export default function ObligationPage() {
 
   return (
     <div>
-      <PageHeader eyebrow={`FY ${data.financial_year} · change the year in the header`} title="Obligation breakdown"
+      <PageHeader howto={[<>Each category's required tonnes = <b>placed tonnes × target %</b>.</>, <>Change the <b>FY</b> selector in the header to view another financial year.</>, <>The bottom table lists the exact <b>invoice lines</b> behind every number.</>]} eyebrow={`FY ${data.financial_year} · change the year in the header`} title="Obligation breakdown"
         subtitle="Obligation (t) = packaging placed on the market (t) × target %. Targets are DEMO PLACEHOLDERS: verify on the CPCB portal." />
       <Card className="mb-6 p-5">
         <ProgressBar p={data.overall} size="lg" />

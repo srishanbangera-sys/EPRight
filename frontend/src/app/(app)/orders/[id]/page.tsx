@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, ExternalLink } from "lucide-react";
+import { ArrowLeft, CheckCircle2, ExternalLink, Repeat, ArrowRight, Hourglass, PartyPopper } from "lucide-react";
 import { api, fileHref } from "@/lib/api";
 import { useData } from "@/lib/hooks";
 import { useAuth, useToast } from "@/components/Providers";
@@ -89,9 +89,11 @@ export default function OrderDetail() {
   return (
     <div>
       <Link href={back} className="mb-3 inline-flex items-center gap-1 text-sm font-bold text-slate-500 hover:text-slate-800"><ArrowLeft className="size-4" /> Back</Link>
-      <PageHeader eyebrow={`Order #${o.id} · FY ${o.financial_year}`} title={`${tonnes(o.tonnes)} of Category ${o.category}`}
+      <PageHeader howto={[<>The <b>progress rail</b> shows where the order is: Placed → Accepted → Paid → Delivered → Received → Validated.</>, <>The buttons show only the <b>next allowed actions</b> for your role.</>, <><b>Recycler:</b> Accept, then Record delivered credit with any certificate ID, e.g. CPCB-DEMO-001.</>, <><b>Producer:</b> Pay (simulated), then Mark received. Validation runs and tonnes move to Covered.</>]} eyebrow={`Order #${o.id} · FY ${o.financial_year}`} title={`${tonnes(o.tonnes)} of Category ${o.category}`}
         subtitle={`${o.producer_name} buying from ${o.recycler_name} at ${inr(o.price_per_tonne)}/t`}
         actions={<><OrderStatus status={o.status} /><Pill tone={o.escrow_status === "HELD" ? "amber" : o.escrow_status === "RELEASED" ? "green" : "slate"}>Escrow: {human(o.escrow_status)}</Pill></>} />
+
+      <NextStep o={o} />
 
       <Card className="mb-6 p-5">
         <div className="scrollbar-thin flex gap-1 overflow-x-auto">
@@ -234,6 +236,69 @@ export default function OrderDetail() {
         footer={<Button variant={modal === "refund" ? "danger" : "primary"} loading={busy} onClick={() => act(modal!, { body: form })}>{modal === "validate" ? "Validate" : "Refund"}</Button>}>
         <Field label="Note (logged)"><Textarea value={form.note || ""} onChange={set("note")} /></Field>
       </Modal>
+    </div>
+  );
+}
+
+/** Tells the presenter whose turn it is, with a one-click role switch that lands on this same order. */
+function NextStep({ o }: { o: any }) {
+  const { user, demoLogin } = useAuth();
+  const toast = useToast();
+  const router = useRouter();
+  const [busy, setBusy] = useState(false);
+  if (!user || user.role === "ADMIN") return null;
+  const me = user.role;
+  const waitingOn: Record<string, { who: "PRODUCER" | "RECYCLER"; text: string }> = {
+    PLACED: { who: "RECYCLER", text: "The recycler needs to accept or reject this order." },
+    ACCEPTED: { who: "PRODUCER", text: "The producer pays into simulated escrow. The tonnes then count as Committed." },
+    PAID_ESCROW: { who: "RECYCLER", text: "The recycler generates the credit on the CPCB portal, then records the certificate here." },
+    IN_PROGRESS: { who: "RECYCLER", text: "The recycler records the delivered certificate." },
+    OVERDUE: { who: "RECYCLER", text: "Past the expected date. The recycler should deliver now." },
+    DELIVERED: { who: "PRODUCER", text: "The producer checks their CPCB account and marks it received. Validation runs automatically." },
+  };
+  const done = ["VALIDATED", "COMPLETED"].includes(o.status);
+  const w = waitingOn[o.status];
+  if (!done && !w) return null;
+
+  const switchTo = async (role: "PRODUCER" | "RECYCLER") => {
+    setBusy(true);
+    try {
+      const accounts = await api<any[]>("/auth/demo-accounts");
+      const name = role === "PRODUCER" ? o.producer_name : o.recycler_name;
+      const acct = accounts.find((a) => a.org_name === name);
+      if (!acct) throw new Error("No demo account for this organisation");
+      await demoLogin(acct.email);
+      toast({ kind: "info", title: `Now acting as ${acct.org_name}`, body: `${role.toLowerCase()} view` });
+      router.push(`/orders/${o.id}`);
+    } catch (e: any) {
+      toast({ kind: "error", title: "Could not switch", body: e.message });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (done) {
+    return (
+      <div className="mb-4 flex flex-wrap items-center gap-3 rounded-xl border border-green-200/80 bg-green-50/60 px-4 py-3">
+        <PartyPopper className="size-[18px] text-covered" />
+        <p className="flex-1 text-sm text-green-900"><span className="font-medium">Credit validated.</span> {o.tonnes} t moved to Covered{o.status === "COMPLETED" ? " and the simulated escrow was released" : ""}.</p>
+        {me === "PRODUCER"
+          ? <Link href="/producer" className="inline-flex items-center gap-1 text-sm font-medium text-green-900 hover:underline">See the bar <ArrowRight className="size-4" /></Link>
+          : user.is_demo && <button disabled={busy} onClick={() => switchTo("PRODUCER")} className="inline-flex items-center gap-1.5 text-sm font-medium text-green-900 hover:underline"><Repeat className="size-4" /> Switch to producer</button>}
+      </div>
+    );
+  }
+  const mine = w.who === me;
+  return (
+    <div className={`mb-4 flex flex-wrap items-center gap-3 rounded-xl border px-4 py-3 ${mine ? "border-slate-900 bg-slate-900 text-white" : "border-slate-200 bg-white shadow-soft"}`}>
+      {mine ? <ArrowRight className="size-[18px] text-committed" /> : <Hourglass className="size-[18px] text-slate-400" />}
+      <p className={`flex-1 text-sm ${mine ? "text-white/90" : "text-slate-600"}`}>
+        <span className={`font-medium ${mine ? "text-white" : "text-slate-900"}`}>{mine ? "Your turn. " : `Waiting on the ${w.who.toLowerCase()}. `}</span>{w.text}
+      </p>
+      {!mine && user.is_demo && (
+        <Button size="sm" variant="primary" loading={busy} icon={<Repeat className="size-3.5" />} onClick={() => switchTo(w.who)}>Switch to {w.who.toLowerCase()}</Button>
+      )}
+      {mine && <span className="text-xs text-white/50">Use the buttons below</span>}
     </div>
   );
 }

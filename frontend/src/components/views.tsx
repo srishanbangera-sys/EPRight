@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ShieldCheck, ShieldX, Download, FileUp, Bug, Undo2, ExternalLink } from "lucide-react";
 import { api, download, fileHref } from "@/lib/api";
+import { markDemo } from "@/lib/demo";
 import { useData } from "@/lib/hooks";
 import { fmtDate, fmtDateTime, human, inr, tonnes } from "@/lib/format";
 import { useAuth, useToast } from "./Providers";
@@ -43,6 +44,7 @@ export function AuditView({ admin }: { admin?: boolean }) {
     setBusy("verify");
     try {
       const r = await api("/audit/verify");
+      if (r.intact) markDemo("audit");
       setChain(r);
       toast(r.intact ? { kind: "success", title: "Chain intact", body: `${r.checked} events re-hashed.` } : { kind: "error", title: "Chain broken", body: `First broken event #${r.brokenAt?.id}` });
       reload();
@@ -83,6 +85,7 @@ export function AuditView({ admin }: { admin?: boolean }) {
       <PageHeader
         eyebrow="Evidence"
         title={admin ? "Audit log" : "Audit mode"}
+        howto={[<>Press <b>Verify chain</b>. Every event is re-hashed and you should see <b>Chain intact</b>.</>, <>Expand <b>payload</b> on any row to see exactly what was recorded.</>, ...(admin ? [<>Press <b>Tamper with an event</b>, then verify again: the break is detected. <b>Restore</b> fixes it.</>] : []), <>Export the log as <b>CSV or PDF</b> for auditors.</>]}
         subtitle="Every significant action is written to a tamper-evident log. Each event's hash = SHA-256(previous hash + timestamp + actor + action + payload). Changing any past event breaks every hash after it."
         actions={
           <>
@@ -182,7 +185,7 @@ export function ProfileView() {
 
   return (
     <div>
-      <PageHeader eyebrow="Account" title={org.name} subtitle="Verification is document upload, expiry tracking and admin review. It is not an automatic government lookup." actions={<OrgStatus status={org.status} />} />
+      <PageHeader howto={[<>Keep your <b>registration</b>{isRec ? " and consent-to-operate" : ""} documents in date. Expiry within 30 days marks you <b>At risk</b>.</>, <>Upload a renewed document below; an admin reviews it.</>, <>Edit location, contact{isRec ? " and monthly capacity" : ""} with <b>Edit</b>.</>]} eyebrow="Account" title={org.name} subtitle="Verification is document upload, expiry tracking and admin review. It is not an automatic government lookup." actions={<OrgStatus status={org.status} />} />
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-1">
           <CardHeader title="Company details" action={!edit && <Button size="sm" variant="outline" onClick={() => setEdit({ location: org.location || "", contact: org.contact || "", monthly_capacity_t: org.monthly_capacity_t })}>Edit</Button>} />
@@ -276,7 +279,7 @@ export function OrdersPage({ party, title }: { party: "producer" | "recycler"; t
   const count = (k: string) => (data || []).filter((o) => (k === "action" ? actionFor : GROUPS[k] || []).includes(o.status)).length;
   return (
     <div>
-      <PageHeader eyebrow="Orders" title={title} subtitle="Every status change is checked against the order state machine and written to the audit log." />
+      <PageHeader howto={party === "producer" ? [<><b>Needs my action</b>: pay accepted orders, mark delivered ones received.</>, <>Open an order for its timeline and validation result.</>, <>The recycler acts next. Use <b>Demo: switch role</b> to play their side.</>] : [<><b>Needs my action</b>: accept new orders, deliver paid ones.</>, <>Open an order and use the buttons for the next step.</>, <>Record the delivered credit with any certificate ID, e.g. <b>CPCB-DEMO-001</b>.</>]} eyebrow="Orders" title={title} subtitle="Every status change is checked against the order state machine and written to the audit log." />
       <div className="mb-4">
         <Tabs value={tab} onChange={setTab} items={[
           { value: "all", label: "All", count: data?.length },

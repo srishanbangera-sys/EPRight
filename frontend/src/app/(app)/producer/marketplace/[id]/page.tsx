@@ -67,7 +67,7 @@ export default function ListingDetail() {
   return (
     <div>
       <Link href="/producer/marketplace" className="mb-3 inline-flex items-center gap-1 text-sm font-bold text-slate-500 hover:text-slate-800"><ArrowLeft className="size-4" /> Marketplace</Link>
-      <PageHeader title={`${r.name} · Category ${l.category}`} subtitle={`${inr(l.price_per_tonne)}/t · ${tonnes(l.tonnes_available)} available · completes ${fmtDate(l.expected_completion)}`} actions={<OrgStatus status={r.status} until={r.docs_valid_until} />} />
+      <PageHeader howto={[<>Read the <b>Safety Check</b> reasons. Each one explains in plain words why it is green, amber or red.</>, <>Change <b>Tonnes</b> and press <b>Re-run Safety Check</b> to see the verdict update.</>, <><b>Place order</b>. Red is blocked; amber asks you to confirm the warnings first.</>]} title={`${r.name} · Category ${l.category}`} subtitle={`${inr(l.price_per_tonne)}/t · ${tonnes(l.tonnes_available)} available · completes ${fmtDate(l.expected_completion)}`} actions={<OrgStatus status={r.status} until={r.docs_valid_until} />} />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">

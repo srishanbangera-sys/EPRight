@@ -34,7 +34,7 @@ export default function FlaggedPage() {
   if (error) return <ErrorBox error={error} onRetry={reload} />;
   return (
     <div>
-      <PageHeader eyebrow="Review" title="Flagged" subtitle="Orders and credits that failed validation. Decide whether to validate after review or refund / remove." />
+      <PageHeader howto={[<>Orders and credits that <b>failed validation</b> land here, with the exact failed rules.</>, <><b>Validate after review</b> to override, or <b>Refund</b> / <b>Remove</b>. Every decision is logged.</>, <>Duplicate certificate IDs are listed at the bottom as <b>possible fraud</b>.</>]} eyebrow="Review" title="Flagged" subtitle="Orders and credits that failed validation. Decide whether to validate after review or refund / remove." />
       <Card className="mb-6">
         <CardHeader title="Flagged orders" />
         {data.orders.length === 0 ? <Empty title="No flagged orders" /> : data.orders.map((o: any) => (

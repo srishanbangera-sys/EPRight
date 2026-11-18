@@ -54,7 +54,7 @@ export default function BasketPage() {
 
   return (
     <div>
-      <PageHeader eyebrow="Buy credits" title="Smart Basket · Close my gap" subtitle="Recommends the combination of listings that closes your remaining gap at the lowest risk-adjusted cost by the deadline. Effective cost = price × (1 + weight × (100 − reliability) / 100)." />
+      <PageHeader howto={[<>Pick <b>Cheapest, Balanced or Safest</b>. Safer weights penalise unreliable recyclers.</>, <>The cards compare the basket with two naive choices: the <b>savings</b> and the <b>risks they ignore</b>.</>, <>Press <b>Order this</b> on one line (quickest for the demo) or <b>Place all orders</b>.</>]} eyebrow="Buy credits" title="Smart Basket · Close my gap" subtitle="Recommends the combination of listings that closes your remaining gap at the lowest risk-adjusted cost by the deadline. Effective cost = price × (1 + weight × (100 − reliability) / 100)." />
       <Card className="mb-6 flex flex-wrap items-end gap-4 p-5">
         <Field label="Preference">
           <Tabs value={pref} onChange={(v) => { setPref(v); compute(v); }} items={[{ value: "CHEAPEST", label: "Cheapest" }, { value: "BALANCED", label: "Balanced" }, { value: "SAFEST", label: "Safest" }]} />

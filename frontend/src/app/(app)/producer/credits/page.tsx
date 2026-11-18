@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Plus, ExternalLink } from "lucide-react";
 import { api, ApiError, fileHref } from "@/lib/api";
+import { markDemo } from "@/lib/demo";
 import { useData } from "@/lib/hooks";
 import { useAuth, useToast } from "@/components/Providers";
 import { fmtDate, inr, tonnes } from "@/lib/format";
@@ -35,6 +36,7 @@ export default function CreditsPage() {
       bump();
       reload();
     } catch (e: any) {
+      if (e instanceof ApiError && e.status === 409) markDemo("dup");
       if (e instanceof ApiError && e.data?.validation) setResult({ ok: false, reasons: (e.data.validation as any).reasons, title: "Rejected: duplicate certificate ID" });
       toast({ kind: "error", title: "Rejected", body: e.message });
     } finally {
@@ -44,7 +46,7 @@ export default function CreditsPage() {
 
   return (
     <div>
-      <PageHeader eyebrow="Evidence" title="Credit Passport" subtitle="One neutral view of every credit you hold, bought on EPRight or anywhere else. External credits run through the same validation (rules 1, 2 and 4)."
+      <PageHeader howto={[<>Every credit you hold, from EPRight or <b>anywhere else</b>, in one view.</>, <>Press <b>Add external credit</b>, fill it in (issue date inside this FY) and it validates and counts as Covered.</>, <>Try a <b>certificate ID already used</b>: it is rejected and flagged as possible fraud.</>]} eyebrow="Evidence" title="Credit Passport" subtitle="One neutral view of every credit you hold, bought on EPRight or anywhere else. External credits run through the same validation (rules 1, 2 and 4)."
         actions={<Button icon={<Plus className="size-4" />} onClick={() => { setResult(null); setF({ category: "I", issue_date: "" }); setOpen(true); }}>Add external credit</Button>} />
 
       {result && (

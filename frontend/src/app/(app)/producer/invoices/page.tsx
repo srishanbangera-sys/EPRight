@@ -50,7 +50,7 @@ export default function InvoicesPage() {
 
   return (
     <div>
-      <PageHeader eyebrow="Obligation" title="Invoices" subtitle="Upload plastic-packaging invoices. AI reads them as an assistant; you must check and confirm every value before anything is saved." />
+      <PageHeader howto={[<>Upload a PDF or image (try the files in <b>sample-invoices/</b>). <b>Read with AI</b> uses Gemini.</>, <>No file? Click <b>SAMPLE-INV-001…003</b> for a pre-read invoice, or <b>Manual entry</b>.</>, <>Check every value. <b>Amber lines</b> are low AI confidence. Fix the category or quantity if needed.</>, <>Press <b>Confirm</b>. The obligation recomputes instantly (placed tonnes × 40% target).</>]} eyebrow="Obligation" title="Invoices" subtitle="Upload plastic-packaging invoices. AI reads them as an assistant; you must check and confirm every value before anything is saved." />
 
       <div className="mb-6 grid gap-6 lg:grid-cols-2">
         <Card className="p-5">

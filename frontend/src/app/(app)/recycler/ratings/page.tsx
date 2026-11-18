@@ -14,7 +14,7 @@ export default function RatingsPage() {
   const p = data.profile;
   return (
     <div>
-      <PageHeader eyebrow="Supply" title="Ratings" subtitle="Producers rate you after each completed order. Ratings and on-time rate feed the marketplace ranking and the Safety Check." />
+      <PageHeader howto={[<>Producers rate you after each <b>completed</b> order.</>, <>Rating and <b>on-time rate</b> affect your marketplace ranking and the producer's Safety Check.</>]} eyebrow="Supply" title="Ratings" subtitle="Producers rate you after each completed order. Ratings and on-time rate feed the marketplace ranking and the Safety Check." />
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         <Card className="p-5"><p className="text-sm font-bold text-slate-500">Average</p><p className="text-3xl font-black">{p.avgRating ?? "-"} <Star className="inline size-6 text-amber-500" /></p></Card>
         <Card className="p-5"><p className="text-sm font-bold text-slate-500">Ratings</p><p className="text-3xl font-black">{p.ratingCount}</p></Card>

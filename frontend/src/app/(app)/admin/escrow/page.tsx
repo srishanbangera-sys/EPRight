@@ -31,7 +31,7 @@ export default function EscrowPage() {
   if (error) return <ErrorBox error={error} onRetry={reload} />;
   return (
     <div>
-      <PageHeader eyebrow="Review" title="Escrow actions" subtitle="Release held amounts once a credit is VALIDATED, or refund." />
+      <PageHeader howto={[<>Orders with a <b>simulated escrow</b> balance are listed here.</>, <><b>Release</b> once validated (auto-release is on by default in Settings), or <b>Refund</b>.</>]} eyebrow="Review" title="Escrow actions" subtitle="Release held amounts once a credit is VALIDATED, or refund." />
       <div className="mb-4"><SimulatedBanner>Escrow is simulated; in production a licensed payment partner would hold funds</SimulatedBanner></div>
       <Card>
         {data!.length === 0 ? <Empty title="No escrow activity yet" /> : (

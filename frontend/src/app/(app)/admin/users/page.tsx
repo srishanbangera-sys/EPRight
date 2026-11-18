@@ -10,7 +10,7 @@ export default function UsersPage() {
   if (error) return <ErrorBox error={error} onRetry={reload} />;
   return (
     <div>
-      <PageHeader eyebrow="Platform" title="Users" />
+      <PageHeader howto={[<>Every account, its role and its organisation status.</>, <>Demo accounts can be used instantly from <b>Demo: switch role</b>.</>]} eyebrow="Platform" title="Users" />
       <Card>
         <Table head={["#", "Name", "Email", "Role", "Organisation", "Status"]}>
           {data!.map((u) => (

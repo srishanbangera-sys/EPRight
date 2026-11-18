@@ -57,7 +57,7 @@ export default function SettingsPage() {
 
   return (
     <div>
-      <PageHeader eyebrow="Platform" title="Settings & rules" subtitle="Rules, targets and rates are amended from time to time. Seeded values are DEMO PLACEHOLDERS: verify against the CPCB portal."
+      <PageHeader howto={[<>Edit <b>target %</b> per category and year. Producer obligations recompute immediately.</>, <>Adjust compensation <b>rates</b>, Safety Check <b>thresholds</b> and filing deadlines.</>, <>Press <b>Save all settings</b>. The change is written to the audit log.</>]} eyebrow="Platform" title="Settings & rules" subtitle="Rules, targets and rates are amended from time to time. Seeded values are DEMO PLACEHOLDERS: verify against the CPCB portal."
         actions={<Button size="lg" loading={busy} onClick={save}>Save all settings</Button>} />
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
